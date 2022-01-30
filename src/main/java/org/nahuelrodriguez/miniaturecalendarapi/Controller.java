@@ -39,6 +39,6 @@ public class Controller {
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     public Map.Entry<String, String> handle(final RuntimeException e) {
         LOG.error("Error: '{}'", e.getMessage());
-        return Map.entry("error", "" e.getMessage());
+        return Map.entry("error", e.getMessage());
     }
 }
