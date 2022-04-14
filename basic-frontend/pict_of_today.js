@@ -9,7 +9,7 @@ class TemplateComponent {
 
     render() {
         if (this.cmp.state.error) {
-            return errorMessage(this.cmp, this.cmp.errorMessage());
+            return errorMessage(this.cmp);
         }
 
         if (!this.cmp.state.isPressed) {
@@ -28,15 +28,12 @@ class TemplateComponent {
 class PicturesOfTodayButton extends React.Component {
     constructor(props) {
         super(props);
+        this.hideText = 'Hide Pictures of the Day';
         this.state = {items: [], error: null, isPressed: false, loaded: false};
     }
 
     render() {
         return new TemplateComponent(this).render();
-    }
-
-    errorMessage() {
-        return 'Hide Pictures of the Day';
     }
 
     showButton() {
@@ -59,7 +56,7 @@ class PicturesOfTodayButton extends React.Component {
                 {onClick: () => {this.setState({isPressed: false, items: [], loaded: false});
                         hideData();}
                 },
-                'Hide Pictures of the Day')
+                this.hideText)
         );
     }
 }

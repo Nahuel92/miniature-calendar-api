@@ -1,10 +1,10 @@
-function errorMessage(component, buttonText) {
+function errorMessage(component) {
     return e('div',
         {},
         component.state.error.error,
         e('button',
             {onClick: () => component.setState({error: null, isPressed: false})},
-            buttonText
+            component.hideText
         )
     );
 }

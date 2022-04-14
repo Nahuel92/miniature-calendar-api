@@ -3,6 +3,7 @@
 class PicturesFromDateButton extends React.Component {
     constructor(props) {
         super(props);
+        this.hideText = 'Hide Pictures from Date';
         this.state = {items: [], error: null, date: null, isPressed: false, loaded: false};
     }
 
@@ -13,10 +14,6 @@ class PicturesFromDateButton extends React.Component {
 
     render() {
         return new TemplateComponent(this).render();
-    }
-
-    errorMessage() {
-        return 'Hide Pictures from Date';
     }
 
     showButton() {
@@ -58,7 +55,7 @@ class PicturesFromDateButton extends React.Component {
                         hideData();
                     }
                 },
-                'Hide Pictures from Date')
+                this.hideText)
         );
     }
 }
