@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 
 @RestController
@@ -21,18 +22,25 @@ public class Controller {
     }
 
     @GetMapping("/picture")
-    public Collection<Picture> getPictureOfTheDay(@RequestParam final Boolean random) {
+    public Collection<Picture> getPictureOfTheDay(final Locale locale, @RequestParam final Boolean random) {
         LOG.info("Retrieving " + (random ? "random picture" : "image of the day"));
         if (random) {
-            return apiService.getPicturesFromDate(randomDateGenerator.getDate());
+            return apiService.getPicturesFromDate(locale, randomDateGenerator.getDate());
         }
-        return apiService.getPicturesOfTheDay();
+        return apiService.getPicturesOfTheDay(locale);
     }
 
     @GetMapping("/picture/{date}")
-    public Collection<Picture> getPictureFromDate(@PathVariable final String date) {
+    public Collection<Picture> getPictureFromDate(final Locale locale, @PathVariable final String date) {
         LOG.info("Retrieving picture from date '{}'", date);
-        return apiService.getPicturesFromDate(date);
+        return apiService.getPicturesFromDate(locale, date);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map.Entry<String, String> handle(final IllegalArgumentException e) {
+        LOG.warn("Bad request: '{}'", e.getMessage());
+        return Map.entry("error", e.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)

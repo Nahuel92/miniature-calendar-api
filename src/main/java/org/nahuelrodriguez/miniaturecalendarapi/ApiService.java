@@ -12,10 +12,8 @@ import org.springframework.util.FileCopyUtils;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.time.format.FormatStyle;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 @Service
@@ -34,22 +32,36 @@ public class ApiService {
     }
 
     @Cacheable("picturesOfTheDay")
-    public Collection<Picture> getPicturesOfTheDay() {
+    public Collection<Picture> getPicturesOfTheDay(final Locale locale) {
         final var today = LocalDate.now().format(DATE_FORMAT);
-        return getPicturesFromDate(today);
+        return getPicturesFromDate(locale, today);
     }
 
     @Cacheable(value = "picturesFromDate", key = "#date", unless = "#result == null")
-    public Collection<Picture> getPicturesFromDate(final String date) {
-        validateFormat(date);
+    public Collection<Picture> getPicturesFromDate(final Locale locale, final String date) {
+        validateFormat(date, locale);
         final var document = getDocument(date);
         final var pictureURLs = getPictureURLs(document);
         return createPictures(pictureURLs);
     }
 
-    private void validateFormat(final String date) {
+    private void validateFormat(final String date, final Locale locale) {
         LOG.info("Validating date");
-        resultOf(() -> LocalDate.parse(date, DATE_FORMAT));
+        resultOf(() -> {
+            final var parsedDate = LocalDate.parse(date, DATE_FORMAT);
+
+            if (parsedDate.isBefore(LocalDate.parse("2011/04/20", DateTimeFormatter.ofPattern("yyyy/MM/dd")))) {
+                throw new IllegalArgumentException("Date must be after " + DateTimeFormatter
+                        .ofLocalizedDate(FormatStyle.MEDIUM)
+                        .withLocale(locale)
+                        .format(LocalDate.parse("2011-04-20"))
+                        + "!");
+            }
+            if (parsedDate.isAfter(LocalDate.now())) {
+                throw new IllegalArgumentException("Date must be before tomorrow!");
+            }
+            return parsedDate;
+        });
     }
 
     private Document getDocument(final String today) {
@@ -83,6 +95,8 @@ public class ApiService {
     private <T> T resultOf(final Callable<T> action) {
         try {
             return action.call();
+        } catch (final IllegalArgumentException e) {
+            throw e;
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
