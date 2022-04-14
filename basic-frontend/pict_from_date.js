@@ -25,7 +25,7 @@ class PicturesFromDateButton extends React.Component {
                     'Show Picture/s from Date'
                 )
             ),
-            e('div', {class: 'date-picker', id: ''},
+            e('div', { className: 'date-picker' },
                 e('input',
                     {
                         placeholder: 'YYMMDD',

@@ -12,7 +12,7 @@ class TemplateComponent {
                 this.cmp.state.error.error,
                 e('button',
                     {onClick: () => this.cmp.setState({error: null, isPressed: false})},
-                    cmp.hideText
+                    this.cmp.hideText
                 )
             );
         }
@@ -30,8 +30,8 @@ class TemplateComponent {
                 e('img',
                     {src: `data:image/jpg;base64,${item.picture}`, key: item.url + item.url + item.url}
                 ),
-                e('a', {href: item.url, class: 'lnk', key: item.url}, item.url),
-                e('hr', {class: 'img-hr', key: item.url + item.url}),
+                e('a', {href: item.url, className: 'lnk', key: item.url}, item.url),
+                e('hr', {className: 'img-hr', key: item.url + item.url}),
             ];
         });
         ReactDOM.render(items, contentDiv);
