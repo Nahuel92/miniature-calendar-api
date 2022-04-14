@@ -4,6 +4,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
@@ -14,13 +15,23 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 @Service
 public class ApiService {
     private static final Logger LOG = LoggerFactory.getLogger(ApiService.class);
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyMMdd");
-    private static final String ENDPOINT = "https://miniature-calendar.com/";
+    private final String endpoint;
+
+    ApiService(@Value("${image.source.api.url}") final String endpoint) {
+        Objects.requireNonNull(endpoint);
+        if (endpoint.isBlank()) {
+            throw new IllegalArgumentException("The API URL cannot be blank!");
+        }
+        LOG.info("Using '{}' as image source API URL", endpoint);
+        this.endpoint = endpoint;
+    }
 
     @Cacheable("picturesOfTheDay")
     public Collection<Picture> getPicturesOfTheDay() {
@@ -43,7 +54,7 @@ public class ApiService {
 
     private Document getDocument(final String today) {
         LOG.info("Fetching webpage...");
-        return resultOf(() -> Jsoup.connect(ENDPOINT + today).get());
+        return resultOf(() -> Jsoup.connect(endpoint + today).get());
     }
 
     private List<String> getPictureURLs(final Document document) {
