@@ -17,24 +17,10 @@ class RandomDatePicturesButton extends React.Component {
             {
                 onClick: () => {
                     this.setState({isPressed: true});
-                    fetchData(this, null, true);
+                    fetchData(this, true);
                 }
             },
             'Show Random Pictures of the Day'
-        );
-    }
-
-    displayData() {
-        return e('div',
-            {},
-            e('button',
-                {
-                    onClick: () => {
-                        this.setState({isPressed: false, loaded: false, items: []});
-                        hideData();
-                    }
-                },
-                this.hideText)
         );
     }
 }

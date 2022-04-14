@@ -7,11 +7,6 @@ class PicturesFromDateButton extends React.Component {
         this.state = {items: [], error: null, date: null, isPressed: false, loaded: false};
     }
 
-    fetchFromDate() {
-        const date = (this.state.date + '').replaceAll('-', '').substring(2);
-        fetchData(this, date);
-    }
-
     render() {
         return new TemplateComponent(this).render();
     }
@@ -24,7 +19,7 @@ class PicturesFromDateButton extends React.Component {
                         disabled: !this.state.date || new Date(this.state.date) > new Date(),
                         onClick: () => {
                             this.setState({isPressed: true});
-                            this.fetchFromDate();
+                            fetchData(this);
                         }, key: 'pictFromDate'
                     },
                     'Show Pictures from Date'
@@ -42,20 +37,6 @@ class PicturesFromDateButton extends React.Component {
                     }
                 )
             )
-        );
-    }
-
-    displayData() {
-        return e('div',
-            {},
-            e('button',
-                {
-                    onClick: () => {
-                        this.setState({date: null, isPressed: false, loaded: false});
-                        hideData();
-                    }
-                },
-                this.hideText)
         );
     }
 }
