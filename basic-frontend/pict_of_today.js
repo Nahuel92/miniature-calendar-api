@@ -2,81 +2,64 @@
 
 const e = React.createElement;
 
-class PicturesOfTodayButton extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {liked: false, items: [], error: null, loaded: false};
-    }
-
-    fetch() {
-        fetch("http://localhost:8080/picture?random=false")
-            .then((res) => {
-                if (res.ok) {
-                    return res.json().then(result => {
-                        this.setState({
-                            items: result,
-                            loaded: true
-                        });
-                    })
-                }
-
-                return res.json().then(error => {
-                    this.setState({
-                        loaded: true,
-                        error
-                    });
-                })
-            });
+class TemplateComponent {
+    constructor(cmp) {
+        this.cmp = cmp;
     }
 
     render() {
-        if (this.state.error) {
-            return e('div',
-                {},
-                this.state.error.error,
-                e('button',
-                    {onClick: () => this.setState({liked: false, error: null})},
-                    'Hide Pictures of the Day'
-                )
-            );
+        if (this.cmp.state.error) {
+            return errorMessage(this.cmp, this.cmp.errorMessage());
         }
 
-        if (!this.state.error && this.state.liked && !this.state.loaded) {
+        if (!this.cmp.state.isPressed) {
+            return this.cmp.showButton();
+        }
+
+        if (!this.cmp.state.loaded) {
             return e('div', {}, 'Loading...');
         }
 
-        if (!this.state.error && this.state.liked && this.state.loaded) {
-            const g = this.state.items.map(function (d) {
-                return [e('a', {href: d.url, key: d.url}, d.url),
-                    e('img',
-                        {src: `data:image/jpg;base64,${d.picture}`, key: d.url + d.url},
-                        null
-                    )];
-            });
+        showData(this.cmp.state);
+        return this.cmp.displayData();
+    }
+}
 
-            const cnt = document.querySelector('#content');
-            ReactDOM.render(g, cnt);
+class PicturesOfTodayButton extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {items: [], error: null, isPressed: false, loaded: false};
+    }
 
-            return e('div',
-                {},
-                e('button',
-                    {onClick: () => {this.setState({liked: false, items: []});
-                            const cnt = document.querySelector('#content');
-                            ReactDOM.render(e('div', {}), cnt);}
-                        },
-                    'Hide Pictures of the Day')
-            );
-        }
+    render() {
+        return new TemplateComponent(this).render();
+    }
 
+    errorMessage() {
+        return 'Hide Pictures of the Day';
+    }
+
+    showButton() {
         return e(
             'button',
             {
                 onClick: () => {
-                    this.setState({liked: true});
-                    this.fetch()
+                    this.setState({isPressed: true});
+                    fetchData(this);
                 }
             },
             'Show Pictures of the Day'
+        );
+    }
+
+    displayData() {
+        return e('div',
+            {},
+            e('button',
+                {onClick: () => {this.setState({isPressed: false, items: [], loaded: false});
+                        hideData();}
+                },
+                'Hide Pictures of the Day')
         );
     }
 }

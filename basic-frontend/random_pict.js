@@ -3,78 +3,41 @@
 class RandomDatePicturesButton extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {liked: false, items: [], error: null, loaded: false};
-    }
-
-    fetch() {
-        fetch("http://localhost:8080/picture?random=true")
-            .then((res) => {
-                if (res.ok) {
-                    return res.json().then(result => {
-                        this.setState({
-                            items: result,
-                            loaded: true
-                        });
-                    })
-                }
-
-                return res.json().then(error => {
-                    this.setState({
-                        loaded: true,
-                        error
-                    });
-                })
-            });
+        this.state = {items: [], error: null, isPressed: false, loaded: false};
     }
 
     render() {
-        if (this.state.error) {
-            return e('div',
-                {},
-                this.state.error.error,
-                e('button',
-                    {onClick: () => this.setState({liked: false, error: null})},
-                    'Hide Pictures from Date'
-                )
-            );
-        }
+        return new TemplateComponent(this).render();
+    }
 
-        if (!this.state.error && this.state.liked && !this.state.loaded) {
-            return e('div', {}, "Loading...");
-        }
+    errorMessage() {
+        return errorMessage(this, 'Hide Pictures from Date');
+    }
 
-        if (!this.state.error && this.state.liked && this.state.loaded) {
-            const g = this.state.items.map(function (d) {
-                return [e('a', {href: d.url, key: d.url}, d.url),
-                    e('img',
-                        {src: `data:image/jpg;base64,${d.picture}`, key: d.url + d.url},
-                        null
-                    )];
-            });
-
-            const cnt = document.querySelector('#content');
-            ReactDOM.render(g, cnt);
-
-            return e('div',
-                {},
-                e('button',
-                    {onClick: () => {this.setState({liked: false, loaded: false, items: []});
-                            const cnt = document.querySelector('#content');
-                            ReactDOM.render(e('div', {}), cnt);}
-                        },
-                    'Hide Random Pictures of the Day')
-            );
-        }
-
+    showButton() {
         return e(
             'button',
             {
                 onClick: () => {
-                    this.setState({liked: true});
-                    this.fetch()
+                    this.setState({isPressed: true});
+                    fetchData(this, null, true);
                 }
             },
             'Show Random Pictures of the Day'
+        );
+    }
+
+    displayData() {
+        return e('div',
+            {},
+            e('button',
+                {
+                    onClick: () => {
+                        this.setState({isPressed: false, loaded: false, items: []});
+                        hideData();
+                    }
+                },
+                'Hide Random Pictures of the Day')
         );
     }
 }
