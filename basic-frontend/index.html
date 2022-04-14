@@ -3,36 +3,14 @@
     <head>
         <meta charset="UTF-8"/>
         <title>Miniature Calendar</title>
-
-        <style>
-            * {
-                box-sizing: border-box;
-            }
-            .lnk {
-                display: block;
-            }
-
-            /* Create three equal columns that floats next to each other */
-            .column {
-                float: left;
-                width: 33.33%;
-                padding: 10px;
-            }
-
-            /* Clear floats after the columns */
-            .row:after {
-                content: "";
-                display: table;
-                clear: both;
-            }
-        </style>
+        <link rel="stylesheet" href="style.css">
     </head>
 
     <body>
         <h2>My low-budget page</h2>
-        <p>Using React to render pictures from www.miniature-calendar.com</p>
+        <p>Using React to render beautiful pictures from <a href="https://www.miniature-calendar.com">miniature-calendar.com</a></p>
+        <p>All credits and pictures ownership belong to Tatsuya Tanaka (please support him if you can :))</p>
 
-        <!-- We will put our React component inside this div. -->
         <div class="row">
             <div id="pictures_of_today_button_container" class="column"></div>
             <div id="random_pictures_button_container" class="column"></div>
@@ -40,6 +18,7 @@
         </div>
 
         <div id="content"></div>
+
         <!-- Load React. -->
         <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
         <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
@@ -49,6 +28,8 @@
         <script src="pict_of_today.js"></script>
         <script src="random_pict.js"></script>
         <script src="pict_from_date.js"></script>
+
+        <!-- Load common logic. -->
         <script src="common.js"></script>
     </body>
 </html>

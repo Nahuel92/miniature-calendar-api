@@ -3,7 +3,7 @@
 class RandomDatePicturesButton extends React.Component {
     constructor(props) {
         super(props);
-        this.hideText = 'Hide Random Pictures of the Day';
+        this.hideText = 'Hide Random Day\'s Picture/s';
         this.state = {items: [], error: null, isPressed: false, loaded: false};
     }
 
@@ -20,7 +20,7 @@ class RandomDatePicturesButton extends React.Component {
                     fetchData(this, true);
                 }
             },
-            'Show Random Pictures of the Day'
+            'Show Random Day\'s Picture/s'
         );
     }
 }

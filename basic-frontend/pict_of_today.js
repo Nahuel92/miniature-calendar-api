@@ -53,7 +53,7 @@ class TemplateComponent {
 class PicturesOfTodayButton extends React.Component {
     constructor(props) {
         super(props);
-        this.hideText = 'Hide Pictures of the Day';
+        this.hideText = 'Hide Today\'s Picture/s';
         this.state = {items: [], error: null, isPressed: false, loaded: false};
     }
 
@@ -70,7 +70,7 @@ class PicturesOfTodayButton extends React.Component {
                     fetchData(this);
                 }
             },
-            'Show Pictures of the Day'
+            'Show Today\'s Picture/s'
         );
     }
 }

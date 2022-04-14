@@ -3,7 +3,7 @@
 class PicturesFromDateButton extends React.Component {
     constructor(props) {
         super(props);
-        this.hideText = 'Hide Pictures from Date';
+        this.hideText = 'Hide Picture/s from Date';
         this.state = {items: [], error: null, date: null, isPressed: false, loaded: false};
     }
 
@@ -22,10 +22,10 @@ class PicturesFromDateButton extends React.Component {
                             fetchData(this);
                         }, key: 'pictFromDate'
                     },
-                    'Show Pictures from Date'
+                    'Show Picture/s from Date'
                 )
             ),
-            e('div', {},
+            e('div', {class: 'date-picker', id: ''},
                 e('input',
                     {
                         placeholder: 'YYMMDD',
