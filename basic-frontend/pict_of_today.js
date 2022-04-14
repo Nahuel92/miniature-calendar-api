@@ -26,11 +26,13 @@ class TemplateComponent {
         }
 
         const items = this.cmp.state.items.map(function (item) {
-            return [e('a', {href: item.url, key: item.url}, item.url),
+            return [
                 e('img',
-                    {src: `data:image/jpg;base64,${item.picture}`, key: item.url + item.url},
-                    null
-                )];
+                    {src: `data:image/jpg;base64,${item.picture}`, key: item.url + item.url + item.url}
+                ),
+                e('a', {href: item.url, class: 'lnk', key: item.url}, item.url),
+                e('hr', {key: item.url + item.url}),
+            ];
         });
         ReactDOM.render(items, contentDiv);
 
