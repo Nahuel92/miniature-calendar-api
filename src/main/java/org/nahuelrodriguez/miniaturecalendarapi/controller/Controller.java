@@ -1,5 +1,7 @@
-package org.nahuelrodriguez.miniaturecalendarapi;
+package org.nahuelrodriguez.miniaturecalendarapi.controller;
 
+import org.nahuelrodriguez.miniaturecalendarapi.entity.Picture;
+import org.nahuelrodriguez.miniaturecalendarapi.service.ApiService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -14,23 +16,22 @@ import java.util.Map;
 public class Controller {
     private static final Logger LOG = LoggerFactory.getLogger(Controller.class);
     private final ApiService apiService;
-    private final RandomDateGenerator randomDateGenerator;
 
-    Controller(final ApiService apiService, final RandomDateGenerator randomDateGenerator) {
+    Controller(final ApiService apiService) {
         this.apiService = apiService;
-        this.randomDateGenerator = randomDateGenerator;
     }
 
-    @GetMapping("/picture")
-    public Collection<Picture> getPictureOfTheDay(final Locale locale, @RequestParam final Boolean random) {
-        LOG.info("Retrieving " + (random ? "random picture" : "image of the day"));
+    @GetMapping("/pictures")
+    public Collection<Picture> getPicturesOfRandomDay(final Locale locale, @RequestParam boolean random) {
         if (random) {
-            return apiService.getPicturesFromDate(locale, randomDateGenerator.getDate());
+            LOG.info("Retrieving pictures of random day");
+            return apiService.getPicturesFromRandomDay(locale);
         }
+        LOG.info("Retrieving pictures of the day");
         return apiService.getPicturesOfTheDay(locale);
     }
 
-    @GetMapping("/picture/{date}")
+    @GetMapping("/pictures/{date}")
     public Collection<Picture> getPictureFromDate(final Locale locale, @PathVariable final String date) {
         LOG.info("Retrieving picture from date '{}'", date);
         return apiService.getPicturesFromDate(locale, date);
@@ -47,6 +48,6 @@ public class Controller {
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     public Map.Entry<String, String> handle(final RuntimeException e) {
         LOG.error("Error: '{}'", e.getMessage());
-        return Map.entry("error", "Internal server error");
+        return Map.entry("error", "Service unavailable. Try again later.");
     }
 }
