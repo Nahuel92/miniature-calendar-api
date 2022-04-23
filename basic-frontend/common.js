@@ -1,8 +1,10 @@
+const server_api = 'https://localhost:443/pictures';
+
 function fetchData(cmp, random = false) {
     const date = cmp.state.date ?
         `/${(cmp.state.date + '').replaceAll('-', '').substring(2)}`
         : '';
-    fetch(`http://localhost:8080/pictures${date}?random=${random}`)
+    fetch(`${server_api}${date}?random=${random}`)
         .then((res) => {
             if (res.ok) {
                 return res.json().then(items => {
