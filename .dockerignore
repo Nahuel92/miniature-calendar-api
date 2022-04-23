@@ -1,0 +1,8 @@
+basic-frontend
+build
+.gitignore
+.dockerignore
+.idea
+*.yaml
+*.md
+LICENSE

@@ -1,27 +1,39 @@
 # BUILDER
 FROM eclipse-temurin:18-jdk AS app-builder
-RUN useradd --user-group --system --create-home --no-log-init stduser
-USER stduser
-
-WORKDIR /app
-COPY gradle gradle
-COPY gradlew gradlew.bat settings.gradle build.gradle ./
-
-RUN ./gradlew dependencies --no-daemon
-COPY src src
 
 ## Unset SUID and GUID permissions to get a hardened image
-RUN for i in `find / -perm +6000 -type f`; do chmod a-s $i; done
+RUN for i in `find / -perm /6000 -type f`; do chmod a-s $i; done
+
+## Add and use non-root user
+RUN adduser --disabled-login --system stduser
+USER stduser
+
+## Copy necessary stuff
+WORKDIR /home/stduser
+COPY gradle gradle
+COPY gradlew gradlew.bat settings.gradle build.gradle min-cal.jks ./
+
+## Download dependencies
+RUN ./gradlew dependencies --no-daemon
+
+# Package JAR
+COPY src src
 RUN ./gradlew bootJar --no-daemon
 
 # APP
 FROM eclipse-temurin:18 AS app-image
-RUN useradd --user-group --system --create-home --no-log-init stduser
-USER stduser
-
-WORKDIR /app
-ENTRYPOINT ["java", "-jar", "app.jar"]
-COPY --from=app-builder /app/build/libs/*.jar ./app.jar
 
 ## Unset SUID and GUID permissions to get a hardened image
-RUN for i in `find / -perm +6000 -type f`; do chmod a-s $i; done
+RUN for i in `find / -perm /6000 -type f`; do chmod a-s $i; done
+
+## Add and use non-root user
+RUN adduser --disabled-login --system stduser
+USER stduser
+
+## Entrypoint for app
+ENTRYPOINT ["java", "-jar", "app.jar"]
+## Copy JAR and Keystore files
+WORKDIR /home/stduser
+RUN echo '====== here ========' && ls -a
+COPY --from=app-builder /home/stduser/min-cal.jks ./min-cal.jks
+COPY --from=app-builder /home/stduser/build/libs/*.jar ./app.jar
