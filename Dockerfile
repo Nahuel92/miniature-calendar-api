@@ -11,7 +11,7 @@ USER stduser
 ## Copy necessary stuff
 WORKDIR /home/stduser
 COPY gradle gradle
-COPY gradlew gradlew.bat settings.gradle build.gradle min-cal.jks ./
+COPY gradlew gradlew.bat settings.gradle build.gradle ./
 
 ## Download dependencies
 RUN ./gradlew dependencies --no-daemon
@@ -32,8 +32,5 @@ USER stduser
 
 ## Entrypoint for app
 ENTRYPOINT ["java", "-jar", "app.jar"]
-## Copy JAR and Keystore files
-WORKDIR /home/stduser
-RUN echo '====== here ========' && ls -a
-COPY --from=app-builder /home/stduser/min-cal.jks ./min-cal.jks
+## Copy JAR
 COPY --from=app-builder /home/stduser/build/libs/*.jar ./app.jar

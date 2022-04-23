@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: min-cal-api
+  name: min-cal-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: min-cal-api
+  template:
+    metadata:
+      labels:
+        app: min-cal-api
+    spec:
+      containers:
+        - image: REGISTRY/mincal-api:v1
+          name: min-cal
+          ports:
+            - containerPort: 4433
+          env:
+            - name: SERVER_PORT
+              value: '4433'
+            - name: IMAGE_SOURCE_API_URL
+              value: 'https://miniature-calendar.com/'
+            - name: CACHE_TIME-TO-LIVE-IN-MILLIS
+              value: '300000'
+            - name: SERVER_SSL_KEY-STORE-PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keystore-secret
+                  key: password
+                  optional: false
+            - name: SERVER_SSL_KEY-STORE
+              value: 'cert/min-cal.jks'
+            - name: SERVER_SSL_KEYALIAS
+              value: 'min-cal'
+            - name: SERVER_SSL_KEYSTORETYPE
+              value: 'PKCS12'
+          resources:
+            limits:
+              memory: 128Mi
+              cpu: 350m
+          volumeMounts:
+            - name: keystore
+              mountPath: '/home/stduser/cert'
+              readOnly: true
+        - image: redis:6.2.6
+          name: redis
+          resources:
+            limits:
+              memory: 256Mi
+              cpu: 300m
+      volumes:
+        - name: keystore
+          secret:
+            secretName: keystore-secret
+            items:
+              - key: cert
+                path: ./min-cal.jks
+            optional: false
+
