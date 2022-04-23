@@ -7,6 +7,7 @@ import org.nahuelrodriguez.miniaturecalendarapi.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
 
@@ -30,6 +31,7 @@ public class PicturesCrawler {
         this.endpoint = endpoint;
     }
 
+    @Cacheable(value = "picturesForDate", key = "#date", unless = "#result == null")
     public Collection<Picture> getPicturesForDate(final String date) {
         final var document = getDocument(date);
         final var pictureURLs = getPictureURIs(document);
@@ -42,14 +44,14 @@ public class PicturesCrawler {
     }
 
     private List<String> getPictureURIs(final Document document) {
-        LOG.debug("Extracting picture links from webpage...");
+        LOG.info("Extracting picture links from webpage...");
         return document.select("img[src$=.jpg]")
                 .not(".wp-post-image")
                 .eachAttr("src");
     }
 
     private Collection<Picture> createPictures(final Collection<String> pictureUrl) {
-        LOG.debug("Downloading pictures...");
+        LOG.info("Downloading pictures...");
         return pictureUrl.parallelStream()
                 .map(this::create)
                 .map(e -> new Picture(e, create(e)))

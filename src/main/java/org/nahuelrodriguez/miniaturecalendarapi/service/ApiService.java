@@ -1,13 +1,13 @@
 package org.nahuelrodriguez.miniaturecalendarapi.service;
 
-import org.nahuelrodriguez.miniaturecalendarapi.utils.ApiDateUtils;
 import org.nahuelrodriguez.miniaturecalendarapi.entity.Picture;
+import org.nahuelrodriguez.miniaturecalendarapi.utils.ApiDateUtils;
 import org.nahuelrodriguez.miniaturecalendarapi.validator.DateValidator;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -20,19 +20,18 @@ public class ApiService {
         this.picturesCrawler = picturesCrawler;
     }
 
-    @Cacheable(value = "picturesFromDate", key = "#date", unless = "#result == null")
-    public Collection<Picture> getPicturesFromDate(final Locale locale, final String date) {
+    public Collection<Picture> getPicturesForDate(final Locale locale, final String date) {
         dateValidator.validateFormat(date, locale);
         return picturesCrawler.getPicturesForDate(date);
     }
 
-    public Collection<Picture> getPicturesOfTheDay(final Locale locale) {
+    public Collection<Picture> getPicturesForToday(final Locale locale) {
         final var today = LocalDate.now().format(ApiDateUtils.DATE_FORMAT);
-        return getPicturesFromDate(locale, today);
+        return getPicturesForDate(locale, today);
     }
 
-    public Collection<Picture> getPicturesFromRandomDay(final Locale locale) {
-        return getPicturesFromDate(locale, calculateRandomDate());
+    public Collection<Picture> getPicturesForRandomDay(final Locale locale) {
+        return getPicturesForDate(locale, calculateRandomDate());
     }
 
     private String calculateRandomDate() {

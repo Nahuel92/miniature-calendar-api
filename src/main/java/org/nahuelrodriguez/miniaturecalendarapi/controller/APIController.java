@@ -12,29 +12,29 @@ import java.util.Locale;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "*")
-public class Controller {
-    private static final Logger LOG = LoggerFactory.getLogger(Controller.class);
+@CrossOrigin(origins = "*", methods = RequestMethod.GET)
+public class APIController {
+    private static final Logger LOG = LoggerFactory.getLogger(APIController.class);
     private final ApiService apiService;
 
-    Controller(final ApiService apiService) {
+    APIController(final ApiService apiService) {
         this.apiService = apiService;
     }
 
     @GetMapping("/pictures")
-    public Collection<Picture> getPicturesOfRandomDay(final Locale locale, @RequestParam boolean random) {
+    public Collection<Picture> getPicturesOfDay(final Locale locale, @RequestParam boolean random) {
         if (random) {
             LOG.info("Retrieving pictures of random day");
-            return apiService.getPicturesFromRandomDay(locale);
+            return apiService.getPicturesForRandomDay(locale);
         }
         LOG.info("Retrieving pictures of the day");
-        return apiService.getPicturesOfTheDay(locale);
+        return apiService.getPicturesForToday(locale);
     }
 
     @GetMapping("/pictures/{date}")
-    public Collection<Picture> getPictureFromDate(final Locale locale, @PathVariable final String date) {
-        LOG.info("Retrieving picture from date '{}'", date);
-        return apiService.getPicturesFromDate(locale, date);
+    public Collection<Picture> getPicturesForDate(final Locale locale, @PathVariable final String date) {
+        LOG.info("Retrieving pictures for date '{}'", date);
+        return apiService.getPicturesForDate(locale, date);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

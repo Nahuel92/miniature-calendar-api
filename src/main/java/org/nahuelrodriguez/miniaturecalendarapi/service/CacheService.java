@@ -20,7 +20,7 @@ public class CacheService {
 
     @Scheduled(fixedRateString = "${cache.time-to-live-in-millis}", initialDelay = 10000)
     public void evictAllCaches() {
-        LOG.trace("Evicting cache...");
+        LOG.debug("Evicting cache...");
         cacheManager.getCacheNames()
                 .stream()
                 .map(cacheManager::getCache)
