@@ -33,4 +33,5 @@ USER stduser
 ## Entrypoint for app
 ENTRYPOINT ["java", "-jar", "app.jar"]
 ## Copy JAR
+WORKDIR /home/stduser
 COPY --from=app-builder /home/stduser/build/libs/*.jar ./app.jar
